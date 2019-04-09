@@ -1,0 +1,25 @@
+namespace Sample.API.Models
+{
+
+    /// <summary>workbookTable</summary>
+    [System.ComponentModel.TypeConverter(typeof(ComponentsSchemasMicrosoftGraphWorkbooktableAllof1TypeConverter))]
+    public partial class ComponentsSchemasMicrosoftGraphWorkbooktableAllof1
+    {
+
+        /// <summary>
+        /// Creates a new instance of <see cref="ComponentsSchemasMicrosoftGraphWorkbooktableAllof1" />, deserializing the content
+        /// from a json string.
+        /// </summary>
+        /// <param name="jsonText">a string containing a JSON serialized instance of this model.</param>
+        /// <returns>an instance of the <see cref="className" /> model class.</returns>
+        public static Sample.API.Models.IComponentsSchemasMicrosoftGraphWorkbooktableAllof1 FromJsonString(string jsonText) => FromJson(Sample.API.Runtime.Json.JsonNode.Parse(jsonText));
+        /// <summary>Serializes this instance to a json string.</summary>
+        /// <returns>a <see cref="System.String" /> containing this model serialized to JSON text.</returns>
+        public string ToJsonString() => ToJson(null, Sample.API.Runtime.SerializationMode.IncludeAll)?.ToString();
+    }
+    /// workbookTable
+    [System.ComponentModel.TypeConverter(typeof(ComponentsSchemasMicrosoftGraphWorkbooktableAllof1TypeConverter))]
+    public partial interface IComponentsSchemasMicrosoftGraphWorkbooktableAllof1 {
+
+    }
+}
