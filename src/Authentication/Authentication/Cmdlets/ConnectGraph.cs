@@ -8,6 +8,7 @@ namespace Microsoft.Graph.PowerShell.Authentication.Cmdlets
     using Microsoft.Graph.PowerShell.Authentication.Models;
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Management.Automation;
     using System.Net.Http;
     using System.Threading;
@@ -31,6 +32,8 @@ namespace Microsoft.Graph.PowerShell.Authentication.Cmdlets
 
         [Parameter(Position = 4)]
         public SwitchParameter ForceRefresh { get; set; }
+
+        private static readonly string InstallationPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
         protected override void BeginProcessing()
         {
@@ -110,9 +113,13 @@ namespace Microsoft.Graph.PowerShell.Authentication.Cmdlets
                 throw ex.InnerException ?? ex;
             }
 
+            ConsoleColor previousColor = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Green;
             WriteObject("Welcome To Microsoft Graph!");
-            // WriteObject(File.ReadAllText(".\\Art\\WelcomeText.txt"));
-            // WriteObject(File.ReadAllText(".\\Art\\GRaphText.txt"));
+            WriteObject(File.ReadAllText(Path.Combine(InstallationPath, ".\\Art\\Welcome.txt")));
+            WriteObject(File.ReadAllText(Path.Combine(InstallationPath, ".\\Art\\Welcome2.txt")));
+            WriteObject(File.ReadAllText(Path.Combine(InstallationPath, ".\\Art\\Welcome3.txt")));
+            Console.ForegroundColor = previousColor;
         }
 
         protected override void StopProcessing()
