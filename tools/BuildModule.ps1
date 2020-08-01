@@ -63,20 +63,15 @@ if ($LASTEXITCODE) {
 $FullVersionNumber = $ModuleVersion
 
 if ($ModulePreviewNumber -ge 0) {
-    if ($RequiredModules.Count -gt 0) {
-        # Prerelease is only supported in PowerShell 7 (preview) and above.
-        $ModuleManifestSettings["RequiredModules"] = $RequiredModules
-        $ModuleManifestSettings["Prerelease"] = "preview$ModulePreviewNumber"
-    }
-    else {
-        $ModuleManifestSettings["Prerelease"] = "preview$ModulePreviewNumber"
-    }
+    $ModuleManifestSettings["Prerelease"] = "preview$ModulePreviewNumber"
     $FullVersionNumber = "$ModuleVersion-preview$ModulePreviewNumber"
 }
-else {
-    if ($RequiredModules.Count -gt 0) {
-        $ModuleManifestSettings["RequiredModules"] = $RequiredModules
-    }
+
+if ($RequiredModules.Count -gt 0) {
+    $ModuleManifestRequired = @()
+    # Split module versions at previews to avoid System.Version conversion error..
+    $RequiredModules | %{ $ModuleManifestRequired += @{ ModuleName = $_.ModuleName ; ModuleVersion =  $_.ModuleVersion.Split("-")[0] } }
+    $ModuleManifestSettings["RequiredModules"] = $ModuleManifestRequired
 }
 
 Write-Host -ForegroundColor Green "Updating '$Module' module manifest and nuspec..."

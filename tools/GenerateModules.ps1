@@ -1,14 +1,11 @@
 ﻿# Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 Param(
-    [string] $RepositoryApiKey,
     [string] $RepositoryName = "PSGallery",
     [int] $ModulePreviewNumber = -1,
     [string] $ModuleMappingConfigPath = (Join-Path $PSScriptRoot "..\config\ModulesMapping.jsonc"),
     [switch] $UpdateAutoRest,
     [switch] $Build,
-    [switch] $Pack,
-    [switch] $Publish,
     [switch] $EnableSigning,
     [switch] $SkipVersionCheck
 )
@@ -34,8 +31,6 @@ $RequiredGraphModules = @()
 # PS Scripts
 $ManageGeneratedModulePS1 = Join-Path $PSScriptRoot ".\ManageGeneratedModule.ps1" -Resolve
 $BuildModulePS1 = Join-Path $PSScriptRoot ".\BuildModule.ps1" -Resolve
-$PackModulePS1 = Join-Path $PSScriptRoot ".\PackModule.ps1" -Resolve
-$PublishModulePS1 = Join-Path $PSScriptRoot ".\PublishModule.ps1" -Resolve
 $ReadModuleReadMePS1 = Join-Path $PSScriptRoot ".\ReadModuleReadMe.ps1" -Resolve
 $ValidateUpdatedModuleVersionPS1 = Join-Path $PSScriptRoot ".\ValidateUpdatedModuleVersion.ps1" -Resolve
 
@@ -48,7 +43,7 @@ if (-not (Test-Path $ModuleMappingConfigPath)) {
 }
 # Install module locally in order to specify it as a dependency for other modules down the generation pipeline.
 # https://stackoverflow.com/questions/46216038/how-do-i-define-requiredmodules-in-a-powershell-module-manifest-psd1.
-$ExistingAuthModule = Find-Module "Microsoft.Graph.Authentication"
+$ExistingAuthModule = Find-Module "Microsoft.Graph.Authentication" -Repository $RepositoryName -AllowPrerelease
 Install-Module $ExistingAuthModule.Name -Repository $RepositoryName -AllowPrerelease -Force
 $RequiredGraphModules += @{ ModuleName = $ExistingAuthModule.Name ; ModuleVersion = $ExistingAuthModule.Version }
 if ($UpdateAutoRest) {
@@ -80,10 +75,10 @@ $ModuleMapping.Keys | ForEach-Object -Begin { $RequestCount = 0 } -End { Write-H
     [VersionState]$VersionState = & $ValidateUpdatedModuleVersionPS1 -ModuleName "$ModulePrefix.$ModuleName" -NextVersion $ModuleVersion
 
     if ($VersionState.Equals([VersionState]::Invalid) -and !$SkipVersionCheck) {
-        Write-Error "The specified version in $ModulePrefix.$ModuleName module is either higher or lower than what's on $RepositoryName. Update the 'module-version' in $ModuleLevelReadMePath"
+        Write-Error "The specified version in $ModulePrefix.$ModuleName module is either higher or lower than what's on PSGallery. Update the 'module-version' in $ModuleLevelReadMePath"
     }
     elseif ($VersionState.Equals([VersionState]::EqualToFeed) -and !$SkipVersionCheck) {
-        Write-Warning "$ModulePrefix.$ModuleName module skipped. Version has not changed and is equal to what's on $RepositoryName."
+        Write-Warning "$ModulePrefix.$ModuleName module skipped. Version has not changed and is equal to what's on PSGallery."
     }
     elseif ($VersionState.Equals([VersionState]::Valid) -or $VersionState.Equals([VersionState]::NotOnFeed) -or $SkipVersionCheck) {
         # Read release notes from readme.
@@ -138,22 +133,12 @@ $ModuleMapping.Keys | ForEach-Object -Begin { $RequestCount = 0 } -End { Write-H
                     Write-Error "Failed to build '$ModuleName' module."
                 }
             }
-
-            if ($Pack) {
-                # Pack generated module.
-                & $PackModulePS1 -Module $ModuleName -ArtifactsLocation $ArtifactsLocation
-            }
         }
         catch {
             Write-Error $_.Exception
         }
         $RequestCount++
     }
-}
-
-if ($Publish) {
-    # Publish generated modules.
-    & $PublishModulePS1 -Modules $ModuleMapping.Keys -ModulePrefix $ModulePrefix -ArtifactsLocation $ArtifactsLocation -RepositoryName $RepositoryName -RepositoryApiKey $RepositoryApiKey
 }
 
 Write-Host -ForegroundColor Green "-------------Done-------------"

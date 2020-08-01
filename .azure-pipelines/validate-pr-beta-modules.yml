@@ -1,54 +1,90 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-# Validate pull requests to master and dev branches for Graph workload modules.
+# Validate pull requests to dev branches for Graph workload modules.
 name: $(BuildDefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 pr:
   branches:
     include:
-    - master
     - dev
-    - milestone/*
   paths:
     include:
-    - src/Beta/*
-    - config/ModulesMapping.jsonc
+      - src/*
+      - config/ModulesMapping.jsonc
+    exclude:
+      - src/Authentication/*
 trigger: none
 
 variables:
-  GRAPH_VERSION: 'beta'
+  MODULE_MAPPING_BETA: '$(System.DefaultWorkingDirectory)/config/ModulesMapping.jsonc'
+  BUILD_NUMBER: $[format('{0:yyMMddHHmm}', pipeline.startTime)]
 
 jobs:
 - job: MSGraphPSSDKValidation
-  displayName: MS Graph PS SDK Beta Validation
-  timeoutInMinutes: 600
+  displayName: MS Graph PS Service Module Validation
+  timeoutInMinutes: 360
   pool:
     vmImage: 'windows-latest'
   
   steps:
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@2
-    displayName: 'Run CredScan'
+    displayName: 'Run: CredScan'
     inputs:
-     debugMode: false
+      toolMajorVersion: V2
+      debugMode: false
 
-  # Install Node
+  - task: NuGetAuthenticate@0
+    displayName: 'NuGet: Authenticate'
+
+  - task: PowerShell@2
+    displayName: 'Register: Dev Feed'
+    inputs:
+      targetType: inline
+      script: |
+          $Params = @{
+              'Name' = $(PS_DEV_FEED)
+              'InstallationPolicy' = 'Trusted'
+              'SourceLocation' = $(PS_DEV_FEED_URL)
+              'Credential' = AzureArtifacts
+          }
+          Register-PSRepository @Params
+      pwsh: true
+
   - task: NodeTool@0
-    displayName: Node install
+    displayName: 'Install: Node'
     inputs:
       versionSpec: '13.14.0'
   
   - task: Npm@1
-    displayName: 'Install AutoRest'
+    displayName: 'Install: AutoRest'
     inputs:
       command: 'custom'
       customCommand: 'install -g autorest'
   
   - task: PowerShell@2
-    displayName: 'Generate and Build Graph Resource Modules'
+    displayName: 'Generate and Build: Service Modules'
     inputs:
       filePath: '$(System.DefaultWorkingDirectory)/tools/GenerateModules.ps1'
-      arguments: '-RepositoryApiKey $(Api_Key) -Build'
+      arguments: '-RepositoryName $(PS_DEV_FEED) -ModulePreviewNumber $(BUILD_NUMBER) -Build'
       pwsh: true
+  
+  - task: PowerShell@2
+    displayName: 'Pack: Service Modules'
+    inputs:
+      targetType: 'inline'
+      script: |
+        [HashTable] $ModuleMapping = Get-Content $(MODULE_MAPPING_BETA) | ConvertFrom-Json -AsHashTable
+        $ModuleMapping.Keys | ForEach-Object -Parallel {
+            $ModuleName = $_
+            & $(System.DefaultWorkingDirectory)/tools/PackModule.ps1 -Module $ModuleName -ArtifactsLocation $(Build.ArtifactStagingDirectory)
+        }
+      pwsh: true
+  
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: Service Modules'
+    inputs:
+      pathToPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: drop
   
   - task: YodLabs.O365PostMessage.O365PostMessageBuild.O365PostMessageBuild@0
     displayName: 'Graph Client Tooling pipeline fail notification'
