@@ -38,11 +38,13 @@ jobs:
     inputs:
       targetType: inline
       script: |
+          $Pat = ConvertTo-SecureString -String '$(PS_DEV_FEED_PAT)' -AsPlainText -Force
+          $Cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $(PS_DEV_FEED), $Pat
           $Params = @{
               'Name' = '$(PS_DEV_FEED)'
               'InstallationPolicy' = 'Trusted'
               'SourceLocation' = '$(PS_DEV_FEED_URL)'
-              'Credential' = '$(PS_DEV_FEED_PAT)'
+              'Credential' = $Cred
           }
           Register-PSRepository @Params
       pwsh: true
