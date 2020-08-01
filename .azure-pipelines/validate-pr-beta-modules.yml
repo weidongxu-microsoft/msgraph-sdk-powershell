@@ -42,9 +42,9 @@ jobs:
       targetType: inline
       script: |
           $Params = @{
-              'Name' = $(PS_DEV_FEED)
+              'Name' = '$(PS_DEV_FEED)'
               'InstallationPolicy' = 'Trusted'
-              'SourceLocation' = $(PS_DEV_FEED_URL)
+              'SourceLocation' = '$(PS_DEV_FEED_URL)'
               'Credential' = AzureArtifacts
           }
           Register-PSRepository @Params
