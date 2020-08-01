@@ -32,10 +32,7 @@ jobs:
     inputs:
       toolMajorVersion: V2
       debugMode: false
-
-  - task: NuGetAuthenticate@0
-    displayName: 'NuGet: Authenticate'
-
+  
   - task: PowerShell@2
     displayName: 'Register: Dev Feed'
     inputs:
@@ -45,7 +42,7 @@ jobs:
               'Name' = '$(PS_DEV_FEED)'
               'InstallationPolicy' = 'Trusted'
               'SourceLocation' = '$(PS_DEV_FEED_URL)'
-              'Credential' = AzureArtifacts
+              'Credential' = '$(PS_DEV_FEED_PAT)'
           }
           Register-PSRepository @Params
       pwsh: true
