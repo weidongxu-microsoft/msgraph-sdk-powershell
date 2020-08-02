@@ -12,6 +12,7 @@ Param(
     [Parameter(Mandatory = $true)][ValidateNotNullOrEmpty()][string] $ModulePrefix
 )
 $LASTEXITCODE = $null
+$NugetSource = "https://api.nuget.org/v3/index.json"
 $NugetPackagesToRemove = "Microsoft.CSharp"
 $AuthenticationProj = Join-Path $PSScriptRoot "..\src\Authentication\Authentication\Microsoft.Graph.Authentication.csproj"
 $GeneratedModuleSlnDir = Join-Path $PSScriptRoot "..\src\$Module"
@@ -64,7 +65,7 @@ foreach($Package in $NugetPackagesToRemove)
 
 # Restore packages.
 Write-Host -ForegroundColor Green "Executing: dotnet restore $GeneratedModuleSln"
-dotnet restore $GeneratedModuleSln
+dotnet restore --source $NugetSource $GeneratedModuleSln
 if($LASTEXITCODE){
     Write-Error "Failed to execute: dotnet restore $GeneratedModuleSln"
     return

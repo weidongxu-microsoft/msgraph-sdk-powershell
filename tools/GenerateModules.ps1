@@ -43,7 +43,10 @@ if (-not (Test-Path $ModuleMappingConfigPath)) {
 }
 # Install module locally in order to specify it as a dependency for other modules down the generation pipeline.
 # https://stackoverflow.com/questions/46216038/how-do-i-define-requiredmodules-in-a-powershell-module-manifest-psd1.
-$ExistingAuthModule = Find-Module "Microsoft.Graph.Authentication" -Repository $RepositoryName -AllowPrerelease
+$ExistingAuthModule = Find-Module -Name "Microsoft.Graph.Authentication" -Repository $RepositoryName -AllowPrerelease
+if (!(Get-Module -Name $ExistingAuthModule.Name -ListAvailable)) {
+    Install-Module $ExistingAuthModule.Name -Repository $RepositoryName -AllowPrerelease -Force
+}
 Install-Module $ExistingAuthModule.Name -Repository $RepositoryName -AllowPrerelease -Force
 $RequiredGraphModules += @{ ModuleName = $ExistingAuthModule.Name ; ModuleVersion = $ExistingAuthModule.Version }
 if ($UpdateAutoRest) {

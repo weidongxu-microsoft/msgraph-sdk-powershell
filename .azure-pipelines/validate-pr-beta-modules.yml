@@ -32,6 +32,9 @@ jobs:
     inputs:
       toolMajorVersion: V2
       debugMode: false
+
+  - task: NuGetAuthenticate@0
+    displayName: 'NuGet: Authenticate'
   
   - task: PowerShell@2
     displayName: 'Register: Dev Feed'
