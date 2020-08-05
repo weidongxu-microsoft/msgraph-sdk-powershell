@@ -47,7 +47,6 @@ jobs:
               'Name' = '$(PS_DEV_FEED)'
               'InstallationPolicy' = 'Trusted'
               'SourceLocation' = '$(PS_DEV_FEED_URL)'
-              'Credential' = $Cred
           }
           Register-PSRepository @Params
       pwsh: true
