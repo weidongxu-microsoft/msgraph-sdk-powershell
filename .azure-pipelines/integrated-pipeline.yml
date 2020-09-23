@@ -27,6 +27,8 @@ trigger:
       - dev
       - releases/*
       - bugfixes/*
+resources:
+- repo: self
 
 stages:
 - stage: ComputeVersion
