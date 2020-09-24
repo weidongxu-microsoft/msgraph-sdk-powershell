@@ -41,9 +41,9 @@ steps:
           Write-Host (Get-Host).Version
 
     - task: NodeTool@0
-      displayName: 'Install NodeJs 14.11.0'
+      displayName: 'Install NodeJs 13.13.0'
       inputs:
-        versionSpec: '14.11.0' 
+        versionSpec: '13.13.0' 
         checkLatest: true # Optional
 
     - task: Npm@1
