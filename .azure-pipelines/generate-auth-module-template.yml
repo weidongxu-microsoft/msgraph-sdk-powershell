@@ -60,10 +60,9 @@ jobs:
 
   - task: CodeMetrics@1
     displayName: 'Run CodeMetrics'
-    enabled: false
+    enabled: true
     inputs:
-        Files: '$(System.DefaultWorkingDirectory)//**//*Microsoft.Graph*.dll;$(System.DefaultWorkingDirectory)//**//*Microsoft.Graph*.exe'
-        file: '$(System.DefaultWorkingDirectory)//**//*Microsoft.Graph*.dll;$(System.DefaultWorkingDirectory)//**//*Microsoft.Graph*.exe'
+        Files: '$(System.DefaultWorkingDirectory)//**//Microsoft.Graph.Authentication.dll;$(System.DefaultWorkingDirectory)//**//Microsoft.Graph.Authentication.exe'
         continueOnError: true
 
   - task: PowerShell@2
