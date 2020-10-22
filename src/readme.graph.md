@@ -6,7 +6,7 @@
 azure: false
 powershell: true
 version: latest
-use: "@autorest/powershell@2.1.401"
+use: "@autorest/powershell@latest"
 metadata:
     authors: Microsoft Corporation
     owners: Microsoft Corporation
@@ -515,9 +515,9 @@ directive:
         $ = $.replace(additionalPropertiesPropRegex, newAdditionalPropertiesProp);
 
         // Override OnDefault to handle all success, 2xx responses, as success and not error.
-        let overrideOnDefaultRegex = /(\s*)(partial\s*void\s*overrideOnDefault)/gmi
-        let overrideOnDefaultImplementation = "$1partial void overrideOnDefault(global::System.Net.Http.HttpResponseMessage responseMessage, global::System.Threading.Tasks.Task<Microsoft.Graph.PowerShell.Models.IOdataError> response, ref global::System.Threading.Tasks.Task<bool> returnNow) => this.OverrideOnDefault(responseMessage,ref returnNow);$1$2"
-        $ = $.replace(overrideOnDefaultRegex, overrideOnDefaultImplementation);
+        // let overrideOnDefaultRegex = /(\s*)(partial\s*void\s*overrideOnDefault)/gmi
+        // let overrideOnDefaultImplementation = "$1partial void overrideOnDefault(global::System.Net.Http.HttpResponseMessage responseMessage, global::System.Threading.Tasks.Task<Microsoft.Graph.PowerShell.Models.IOdataError> response, ref global::System.Threading.Tasks.Task<bool> returnNow) => this.OverrideOnDefault(responseMessage,ref returnNow);$1$2"
+        // $ = $.replace(overrideOnDefaultRegex, overrideOnDefaultImplementation);
 
         return $;
       }
