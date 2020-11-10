@@ -13,10 +13,6 @@ parameters:
     - name: Api_Key
       displayName: 'Api Key'
       type: string
-    - name: GRAPH_VERSION
-      displayName: 'Graph Version'
-      type: string
-      default: 'beta'
     - name: WORKLOAD_MODULE_PATH
       displayName: 'Workload Module Path'
       type: string
@@ -33,6 +29,10 @@ parameters:
       displayName: 'Build Number'
       type: string
       default: $[format('{0:yyMMddHH}', pipeline.startTime)]
+    - name: CHECKOUT_BRANCH
+      displayName: 'Checkout Branch'
+      type: string
+      default: ''
 
 jobs:
 - job: MsGraphPSSDKServiceModulesGeneration
@@ -42,6 +42,17 @@ jobs:
 
   steps:
   - template: ./install-tools-template.yml
+
+  - task: Bash@3
+    displayName: 'Switch Branch $(CHECKOUT_BRANCH)'
+    condition: and(succeeded(), ne(parameters.CHECKOUT_BRANCH, ''))
+    inputs:
+      targetType: 'inline'
+          script: |
+              git status
+              git pull
+              git checkout $(CHECKOUT_BRANCH)
+              git status
 
   - task: PowerShell@2
     displayName: 'Generate Profiles'
