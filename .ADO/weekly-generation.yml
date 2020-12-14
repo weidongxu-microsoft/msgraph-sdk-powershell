@@ -45,7 +45,7 @@ stages:
         displayName: Generate modules with changes
         condition: and(succeeded(), ne(stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'], ''))
         variables:
-          ModulesWithChangesAsString: $[ stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'] ]
+          ModulesWithChanges: $[ stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'] ]
         steps:
           - task: PowerShell@2
             displayName: Generate module
@@ -54,8 +54,7 @@ stages:
               targetType: inline
               script: |
                 Write-Host "Generating changed modules...."
-                $ModulesWithChanges = "$(ModulesWithChangesAsString)" -split " "
-                $ModulesWithChanges | %{
+                "$(ModulesWithChanges)" -split " " | %{
                   Write-Host $_
                 }
   # Git diff on download OpenAPI docs. Store changed modules in a variable.
