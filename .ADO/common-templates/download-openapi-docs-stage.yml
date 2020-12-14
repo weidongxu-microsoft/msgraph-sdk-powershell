@@ -24,7 +24,7 @@ jobs:
     displayName: Microsoft Graph PowerShell SDK Download OpenApiDocs
     pool: MsGraphDevXAzureAgents
     steps:
-      - template: ./checkout.yml
+      - template: ./checkout-step.yml
 
       - task: PowerShell@2
         displayName: Download v1.0 OpenApiDocs
