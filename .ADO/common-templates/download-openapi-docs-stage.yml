@@ -66,13 +66,13 @@ jobs:
             Write-Host "Changed modules:"
             Write-Host $ModuleNames
             Write-Host "##vso[task.setvariable variable=ModulesWithChanges;isOutput=true]$ModuleNames"
-            Write-Host "##vso[task.setvariable variable=TestVar;isOutput=true]test"
+            Write-Host "##vso[task.setvariable variable=TestVar;isOutput=true]Yes" #Module name: $ModuleNames
 
       - script: |
           echo "This is job Foo."
           echo "##vso[task.setvariable variable=doThing;isOutput=true]Yes" #The variable doThing is set to true
         name: DetermineResult
-        
+
       - task: Bash@3
         displayName : "Create weekly branch: $(Branch)"
         inputs:
