@@ -50,15 +50,17 @@ stages:
           varFromStageA: $[ stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['DetermineResult.doThing'] ]
         steps:
           - script: echo $(varFromStageA)
+          - script: echo $(TestVar)
+          - script: echo $(ModulesWithChanges)
           - task: PowerShell@2
             displayName: Generate module
             inputs:
               pwsh: true
               targetType: inline
               script: |
-                Write-Host $TestVar
+                Write-Host $(TestVar)
                 Write-Host "Generating changed modules...."
-                $ModulesWithChanges | %{
+                $(ModulesWithChanges) | %{
                   Write-Host $_
                 }
   # Git diff on download OpenAPI docs. Store changed modules in a variable.
