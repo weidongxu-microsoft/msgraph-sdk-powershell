@@ -20,7 +20,7 @@ parameters:
     default: 'dev'
 
 jobs:
-  - job: MsGraphPSSDKDownloadOpenAPIDocs
+  - job: GetLatestDocs
     displayName: Microsoft Graph PowerShell SDK Download OpenApiDocs
     pool: MsGraphDevXAzureAgents
     steps:
