@@ -7,7 +7,7 @@ pool: MsGraphDevXAzureAgents
 variables:
   # Branch: 'test_weeklyOpenApiDocsDownload/$(Date:yyyyMMdd)'
   Branch: 'test_weeklyOpenApiDocsDownload'
-  BaseBranch: 'po/AutoRESTPSv3Test'
+  BaseBranch: 'dev'
   AUTH_MODULE_NAME: 'Authentication'
   AUTH_MODULE_PATH: 'src\Authentication\Authentication'
   AUTH_MODULE_DLL_PATTERN: 'Microsoft.Graph.Authentication.dll'

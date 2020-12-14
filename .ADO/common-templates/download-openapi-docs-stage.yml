@@ -60,11 +60,7 @@ jobs:
                   }
               }
             }
-            $ChangedModules.Add("New", "App-123")
-            $ChangedModules.Add("New1", "App-1231")
             $ModuleNames = $ChangedModules.Keys
-            Write-Host "Changed modules:"
-            Write-Host $ModuleNames
             Write-Host "##vso[task.setvariable variable=ModulesWithChanges;isOutput=true]$ModuleNames"
 
       - task: Bash@3
