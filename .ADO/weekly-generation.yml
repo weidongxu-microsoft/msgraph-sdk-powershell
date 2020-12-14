@@ -43,25 +43,18 @@ stages:
     jobs:
       - job: GenerateModules
         displayName: Generate modules with changes
-        # condition: and(succeeded(), ne(stageDependencies.DownloadOpenAPIDocs.outputs['GetLatestDocs.OpenAPIDocDiff.ModulesWithChanges'], ''))
+        condition: and(succeeded(), ne(stageDependencies.DownloadOpenAPIDocs.outputs['GetLatestDocs.OpenAPIDocDiff.ModulesWithChanges'], ''))
         variables:
           ModulesWithChangesAsString: $[ stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'] ]
-          TestVar: $[ stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.TestVar'] ]
-          varFromStageA: $[ stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['DetermineResult.doThing'] ]
         steps:
-          - script: echo $(varFromStageA)
-          - script: echo $(TestVar)
-          - script: echo $(ModulesWithChangesAsString)
           - task: PowerShell@2
             displayName: Generate module
             inputs:
               pwsh: true
               targetType: inline
               script: |
-                Write-Host "$(ModulesWithChangesAsString)"
                 Write-Host "Generating changed modules...."
                 $ModulesWithChanges = "$(ModulesWithChangesAsString)" -split " "
-                Write-Host $ModulesWithChanges
                 $ModulesWithChanges | %{
                   Write-Host $_
                 }
