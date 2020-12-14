@@ -1,0 +1,18 @@
+steps:
+- checkout: self
+  clean: true
+  fetchDepth: 1
+  persistCredentials: true
+
+- task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@2
+  displayName: 'Run CredScan'
+  inputs:
+    debugMode: false
+
+- task: PowerShell@2
+  displayName: "Configure User"
+  inputs:
+    targetType: 'inline'
+    script: |
+      git config --global user.email '$(GitUserEmail)'
+      git config --global user.name '$(GitUserName)'

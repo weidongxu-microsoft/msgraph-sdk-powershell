@@ -1,0 +1,91 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+parameters:
+  - name: Branch
+    displayName: 'Branch'
+    type: string
+    default: 'weeklyOpenApiDocsDownload'
+  - name: GitUserEmail
+    displayName: 'Git User Email'
+    type: string
+    default: 'GraphTooling@service.microsoft.com'
+  - name: GitUserName
+    displayName: 'Git User Name'
+    type: string
+    default: 'Microsoft Graph DevX Tooling'
+  - name: BaseBranch
+    displayName: 'Base Branch'
+    type: string
+    default: 'dev'
+
+jobs:
+  - job: MsGraphPSSDKDownloadOpenAPIDocs
+    displayName: Microsoft Graph PowerShell SDK Download OpenApiDocs
+    pool: MsGraphDevXAzureAgents
+    steps:
+      - template: ./checkout.yml
+
+      - task: PowerShell@2
+        displayName: Download v1.0 OpenApiDocs
+        continueOnError: false
+        inputs:
+          filePath: '$(System.DefaultWorkingDirectory)/tools/UpdateOpenApi.ps1'
+          pwsh: true
+
+      - task: PowerShell@2
+        displayName: Download beta OpenApiDocs
+        continueOnError: false
+        inputs:
+          filePath: '$(System.DefaultWorkingDirectory)/tools/UpdateOpenApi.ps1'
+          arguments: '-BetaGraphVersion'
+          pwsh: true
+
+      - task: PowerShell@2
+        displayName: "Get modules with changes"
+        inputs:
+          pwsh: true
+          targetType: 'inline'
+          script: |
+            $diff = git diff --name-only
+            $changedModules = @{}
+            $diff | %{
+              if ($_ -match 'openApiDocs\/(v1.0|beta)\/(.*).yml')
+              {
+                if (!$changedModules.ContainsKey($matches.2))
+                  {
+                    $changedModules.Add($matches.2, $matches.1)
+                  }
+              }
+            }
+            Write-Host "##vso[task.setvariable variable=ModulesWithChanges;isOutput=true]$changedModules.Keys"
+
+      - task: Bash@3
+        displayName : "Create weekly branch: $(Branch)"
+        inputs:
+          targetType: 'inline'
+          script: |
+              git status
+              git checkout $(BaseBranch)
+              git branch $(Branch)
+              git checkout $(Branch)
+              git status
+
+      - task: Bash@3
+        displayName : "Commit Downloaded Files"
+        env: 
+          GITHUB_TOKEN: $(GITHUB_TOKEN)
+        inputs:
+          targetType: 'inline'
+          script: |
+            git status
+            git add .
+            git commit -m 'Weekly OpenApiDocs Download'
+            git status
+            git push --set-upstream origin $(Branch)
+            git status
+
+# References
+# [0] https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables
+# [1] https://hub.github.com/hub-pull-request.1.html
+# https://help.github.com/en/actions/configuring-and-managing-workflows/authenticating-with-the-github_token

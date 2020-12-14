@@ -1,0 +1,44 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+name: $(BuildDefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
+pool: MsGraphDevXAzureAgents
+
+variables:
+  Branch: 'test_weeklyOpenApiDocsDownload/$(Date:yyyyMMdd)'
+  BaseBranch: 'dev'
+  AUTH_MODULE_NAME: 'Authentication'
+  AUTH_MODULE_PATH: 'src\Authentication\Authentication'
+  AUTH_MODULE_DLL_PATTERN: 'Microsoft.Graph.Authentication.dll'
+  MODULE_DLL_PATTERN: 'Microsoft.Graph.Authentication.dll'
+  MODULE_PREFIX: 'Microsoft.Graph'
+  ROLLUP_MODULE_NAME: 'Graph'
+  ROLLUP_MODULE_PATH: 'src/Graph/Graph'
+  WORKLOAD_MODULE_PATH: 'src'
+  Api_Key: 'Api_Key'
+  EnableSigning: true
+  BUILDNUMBER: -1
+
+schedules:
+- cron: "0 12 * * WED" # Run every wednesday at noon UTC
+  displayName: "Weekly SDK Generation"
+  branches: 
+    include:
+    - dev
+  always: true
+
+stages:
+  # Run checkout stage.
+  - stage: DownloadOpenAPIDocs
+    displayName: 'Download OpenAPI Docs'
+    jobs:
+    - template: common-templates/download-openapi-docs-stage.yml
+      parameters:
+        Branch: $(Branch)
+        BaseBranch: $(BaseBranch)
+  # Git diff on download OpenAPI docs. Store changed modules in a variable.
+  # Commit downloaded docs.
+  # If modules change, bump their minor and meta-module version.
+  # Generate changed modules + run tests.
+  # Commit generated files to weekly branch.
+  # Create PR to dev
