@@ -40,7 +40,7 @@ stages:
   - stage: GenerateModulesWithChanges
     displayName: Generate module with changes
     jobs:
-      - job: Generate modules
+      - job: GenerateModules
         displayName: Generate modules with changes
         steps:
           - task: PowerShell@2
