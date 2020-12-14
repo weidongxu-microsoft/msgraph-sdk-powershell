@@ -45,8 +45,8 @@ stages:
         displayName: Generate modules with changes
         # condition: and(succeeded(), ne(stageDependencies.DownloadOpenAPIDocs.outputs['GetLatestDocs.OpenAPIDocDiff.ModulesWithChanges'], ''))
         variables:
-          ModulesWithChanges: $[stageDependencies.DownloadOpenAPIDocs.outputs['GetLatestDocs.OpenAPIDocDiff.ModulesWithChanges']]
-          TestVar: $[stageDependencies.DownloadOpenAPIDocs.outputs['GetLatestDocs.OpenAPIDocDiff.TestVar']]
+          ModulesWithChanges: $[ stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'] ]
+          TestVar: $[ stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.TestVar'] ]
         steps:
           - task: PowerShell@2
             displayName: Generate module
