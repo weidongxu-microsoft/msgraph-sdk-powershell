@@ -5,7 +5,8 @@ name: $(BuildDefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 pool: MsGraphDevXAzureAgents
 
 variables:
-  Branch: 'test_weeklyOpenApiDocsDownload/$(Date:yyyyMMdd)'
+  # Branch: 'test_weeklyOpenApiDocsDownload/$(Date:yyyyMMdd)'
+  Branch: 'test_weeklyOpenApiDocsDownload'
   BaseBranch: 'dev'
   AUTH_MODULE_NAME: 'Authentication'
   AUTH_MODULE_PATH: 'src\Authentication\Authentication'
@@ -50,8 +51,8 @@ stages:
               targetType: inline
               script: |
                 Write-Host "Generating changed modules...."
-                Write-Host stageDependencies.DownloadOpenAPIDocs.outputs['MsGraphPSSDKDownloadOpenAPIDocs.OpenAPIDocDiff.ModulesWithChanges'].Keys
-                stageDependencies.DownloadOpenAPIDocs.outputs['MsGraphPSSDKDownloadOpenAPIDocs.OpenAPIDocDiff.ModulesWithChanges'].Keys | %{
+                $ChangedModules = stageDependencies.DownloadOpenAPIDocs.outputs['MsGraphPSSDKDownloadOpenAPIDocs.OpenAPIDocDiff.ModulesWithChanges']
+                $ChangedModules | %{
                   Write-Host $_
                 }
   # Git diff on download OpenAPI docs. Store changed modules in a variable.

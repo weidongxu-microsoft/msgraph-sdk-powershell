@@ -50,18 +50,19 @@ jobs:
           targetType: 'inline'
           script: |
             $diff = git diff --name-only
-            $changedModules = @{}
+            $ChangedModules = @{}
             $diff | %{
               if ($_ -match 'openApiDocs\/(v1.0|beta)\/(.*).yml')
               {
-                if (!$changedModules.ContainsKey($matches.2))
+                if (!$ChangedModules.ContainsKey($matches.2))
                   {
-                    $changedModules.Add($matches.2, $matches.1)
+                    $ChangedModules.Add($matches.2, $matches.1)
                   }
               }
             }
-            Write-Host $changedModules.Keys
-            Write-Host "##vso[task.setvariable variable=ModulesWithChanges;isOutput=true]$changedModules.Keys"
+            Write-Host "Changed modules:"
+            Write-Host $ChangedModules.Keys
+            Write-Host "##vso[task.setvariable variable=ModulesWithChanges;isOutput=true]$ChangedModules.Keys"
 
       - task: Bash@3
         displayName : "Create weekly branch: $(Branch)"
