@@ -61,7 +61,8 @@ stages:
                 Write-Host "$(ModulesWithChangesAsString)"
                 Write-Host "Generating changed modules...."
                 $ModulesWithChanges = "$(ModulesWithChangesAsString)" -split " "
-                $(ModulesWithChanges) | %{
+                Write-Host $ModulesWithChanges
+                $ModulesWithChanges | %{
                   Write-Host $_
                 }
   # Git diff on download OpenAPI docs. Store changed modules in a variable.
