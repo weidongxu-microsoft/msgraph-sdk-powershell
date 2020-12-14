@@ -43,7 +43,7 @@ stages:
     jobs:
       - job: GenerateModules
         displayName: Generate modules with changes
-        condition: and(succeeded(), ne(stageDependencies.DownloadOpenAPIDocs.outputs['GetLatestDocs.OpenAPIDocDiff.ModulesWithChanges'], ''))
+        # condition: and(succeeded(), ne(stageDependencies.DownloadOpenAPIDocs.outputs['GetLatestDocs.OpenAPIDocDiff.ModulesWithChanges'], ''))
         variables:
           ModulesWithChanges: $[stageDependencies.DownloadOpenAPIDocs.outputs['GetLatestDocs.OpenAPIDocDiff.ModulesWithChanges']]
         steps:
