@@ -47,7 +47,9 @@ stages:
         variables:
           ModulesWithChanges: $[ stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'] ]
           TestVar: $[ stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.TestVar'] ]
+          varFromStageA: $[ stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['DetermineResult.doThing'] ]
         steps:
+          - script: echo $(varFromStageA)
           - task: PowerShell@2
             displayName: Generate module
             inputs:
