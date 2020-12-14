@@ -36,12 +36,14 @@ jobs:
       - task: PowerShell@2
         displayName: Download beta OpenApiDocs
         continueOnError: false
+        enabled: false
         inputs:
           filePath: '$(System.DefaultWorkingDirectory)/tools/UpdateOpenApi.ps1'
           arguments: '-BetaGraphVersion'
           pwsh: true
 
       - task: PowerShell@2
+        name: OpenAPIDocDiff
         displayName: "Get modules with changes"
         inputs:
           pwsh: true
@@ -58,6 +60,7 @@ jobs:
                   }
               }
             }
+            Write-Host $changedModules.Keys
             Write-Host "##vso[task.setvariable variable=ModulesWithChanges;isOutput=true]$changedModules.Keys"
 
       - task: Bash@3

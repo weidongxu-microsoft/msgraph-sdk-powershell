@@ -36,6 +36,24 @@ stages:
       parameters:
         Branch: $(Branch)
         BaseBranch: $(BaseBranch)
+
+  - stage: GenerateModulesWithChanges
+    displayName: Generate module with changes
+    jobs:
+      - job: Generate modules
+        displayName: Generate modules with changes
+        steps:
+          - task: PowerShell@2
+            displayName: Generate module
+            inputs:
+              pwsh: true
+              targetType: inline
+              script: |
+                Write-Host "Generating changed modules...."
+                Write-Host stageDependencies.DownloadOpenAPIDocs.outputs['MsGraphPSSDKDownloadOpenAPIDocs.OpenAPIDocDiff.ModulesWithChanges'].Keys
+                stageDependencies.DownloadOpenAPIDocs.outputs['MsGraphPSSDKDownloadOpenAPIDocs.OpenAPIDocDiff.ModulesWithChanges'].Keys | %{
+                  Write-Host $_
+                }
   # Git diff on download OpenAPI docs. Store changed modules in a variable.
   # Commit downloaded docs.
   # If modules change, bump their minor and meta-module version.
