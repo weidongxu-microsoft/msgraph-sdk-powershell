@@ -60,8 +60,6 @@ jobs:
                   }
               }
             }
-            $ModulesWithChanges.Add("New", "New")
-            $ModulesWithChanges.Add("New1", "New1")
             $ModuleNames = $ModulesWithChanges.Keys
             Write-Host "##vso[task.setvariable variable=ModulesWithChanges;isOutput=true]$ModuleNames"
 
