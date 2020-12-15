@@ -60,12 +60,14 @@ jobs:
                   }
               }
             }
+            $ModulesWithChanges.Add("New", New")
+            $ModulesWithChanges.Add("New", New")
             $ModuleNames = $ModulesWithChanges.Keys
             Write-Host "##vso[task.setvariable variable=ModulesWithChanges;isOutput=true]$ModuleNames"
 
       - task: Bash@3
         displayName : "Create weekly branch: $(Branch)"
-        condition: and(succeeded(), ne(variables.OpenAPIDocDiff.ModulesWithChanges, ''))
+        condition: and(succeeded(), ne(variables['OpenAPIDocDiff.ModulesWithChanges'], ''))
         inputs:
           targetType: 'inline'
           script: |
