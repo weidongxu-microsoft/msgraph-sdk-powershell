@@ -63,11 +63,11 @@ jobs:
     condition: and(succeeded(), ne(parameters.CHECKOUT_BRANCH, ''))
     inputs:
       targetType: 'inline'
-          script: |
-              git status
-              git pull
-              git checkout $(CHECKOUT_BRANCH)
-              git status
+      script: |
+          git status
+          git pull
+          git checkout $(CHECKOUT_BRANCH)
+          git status
 
   - task: PowerShell@2
     displayName: 'Generate Profiles'
