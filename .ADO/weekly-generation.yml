@@ -5,7 +5,8 @@ name: $(BuildDefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 pool: MsGraphDevXAzureAgents
 
 variables:
-  Branch: test_weeklyOpenApiDocsDownload/$[format('{0:yyyyMMdd}', pipeline.startTime)]
+  BranchName: test_weeklyOpenApiDocsDownload
+  BranchDate: $[format('{0:yyyyMMdd}', pipeline.startTime)]
   BaseBranch: 'dev'
   AUTH_MODULE_NAME: 'Authentication'
   AUTH_MODULE_PATH: 'src\Authentication\Authentication'
@@ -34,7 +35,7 @@ stages:
     jobs:
     - template: common-templates/download-openapi-docs-stage.yml
       parameters:
-        Branch: $(Branch)
+        Branch: $(BranchName)/$(BranchDate)
         BaseBranch: $(BaseBranch)
 
   - stage: GenerateModulesWithChanges

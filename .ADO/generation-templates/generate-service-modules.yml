@@ -60,7 +60,8 @@ jobs:
 
   - task: Bash@3
     displayName: 'Switch Branch To $(CHECKOUT_BRANCH)'
-    condition: and(succeeded(), ne(parameters.CHECKOUT_BRANCH, ''))
+    condition: and(succeeded(), ne('${{ parameters.CHECKOUT_BRANCH }}', ''))
+    enabled: false
     inputs:
       targetType: 'inline'
       script: |
