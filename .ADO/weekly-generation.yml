@@ -35,7 +35,7 @@ stages:
     jobs:
     - template: common-templates/download-openapi-docs-stage.yml
       parameters:
-        Branch: $(BranchName)/$(BranchDate)
+        Branch: '$(BranchName)/$(BranchDate)'
         BaseBranch: $(BaseBranch)
 
   - stage: GenerateModulesWithChanges
@@ -53,6 +53,9 @@ stages:
               pwsh: true
               targetType: inline
               script: |
+                Write-Host $(BranchName)
+                Write-Host $(BranchDate)
+                Write-Host $(BaseBranch)
                 Write-Host "Generating changed modules...."
                 "$(ModulesWithChanges)" -split " " | %{
                   Write-Host $_
