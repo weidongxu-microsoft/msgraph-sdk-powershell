@@ -2,10 +2,6 @@
 # Licensed under the MIT License.
 
 parameters:
-    - name: ModulesToGenerate
-      displayName: 'Modules To Generate'
-      type: string
-      default: ''
     - name: AUTH_MODULE_PATH
       displayName: 'Module Path'
       type: string
@@ -43,10 +39,9 @@ jobs:
   displayName: Service Module Generation
   pool: MsGraphDevXAzureAgents
   timeoutInMinutes: 360
-
+  condition: and(succeeded(), ne(stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'], ''))
   variables:
-    ModulesWithChanges: $[ stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'] ]
-
+    ModulesWithChanges2: $[ stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'] ]
   steps:
   - template: ../common-templates/install-tools.yml
 
@@ -59,6 +54,12 @@ jobs:
           Write-Host $(ModulesWithChanges)
           Write-Host "Generating changed modules...."
           "$(ModulesWithChanges)" -split " " | %{
+              Write-Host $_
+            }
+          
+          Write-Host $(ModulesWithChanges2)
+          Write-Host "Generating changed modules...."
+          "$(ModulesWithChanges2)" -split " " | %{
               Write-Host $_
             }
 
@@ -171,6 +172,7 @@ jobs:
 
   - task: PowerShell@2
     displayName: 'Generate and Build Service Modules'
+    enabled: false
     inputs:
       targetType: 'inline'
       pwsh: true

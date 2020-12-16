@@ -35,7 +35,7 @@ stages:
     jobs:
     - template: common-templates/download-openapi-docs-stage.yml
       parameters:
-        Branch: "($BranchName)"+"($BranchDate)"
+        Branch: "$(BranchName)_$(BranchName)"
         BaseBranch: $(BaseBranch)
 
   - stage: GenerateModulesWithChanges
@@ -65,8 +65,10 @@ stages:
     displayName: Generate Service Modules
     jobs:
     - template: generation-templates/generate-service-modules.yml
+      variables:
+        ModulesWithChanges: $[ stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'] ]
       parameters:
-        ModulesToGenerate: $[ stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'] ]
+        ModulesToGenerate: $(ModulesWithChanges)
         Api_Key: $(Api_Key)
         MODULE_PREFIX: $(MODULE_PREFIX)
         WORKLOAD_MODULE_PATH: $(WORKLOAD_MODULE_PATH)
