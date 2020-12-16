@@ -35,7 +35,7 @@ stages:
     jobs:
     - template: common-templates/download-openapi-docs-stage.yml
       parameters:
-        Branch: ($BranchName)/($BranchDate)
+        Branch: "($BranchName)"+"($BranchDate)"
         BaseBranch: $(BaseBranch)
 
   - stage: GenerateModulesWithChanges

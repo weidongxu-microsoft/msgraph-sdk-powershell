@@ -76,6 +76,7 @@ jobs:
 
   - task: PowerShell@2
     displayName: 'Generate Profiles'
+    enabled: false
     continueOnError: false
     inputs:
       targetType: 'filePath'
@@ -174,7 +175,8 @@ jobs:
       targetType: 'inline'
       pwsh: true
       script: |
-         pwsh $(System.DefaultWorkingDirectory)/tools/GenerateModules.ps1 -Build -Test -UpdateAutoRest -ModulesToGenerate ($(ModulesWithChanges)" -split " ")
+         Write-Host "$(ModulesWithChanges)"
+         pwsh $(System.DefaultWorkingDirectory)/tools/GenerateModules.ps1 -Build -Test -UpdateAutoRest -ModulesToGenerate ("$(ModulesWithChanges)" -split " ")
   
   - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
     displayName: 'ESRP DLL Strong Name (Service Modules)'
