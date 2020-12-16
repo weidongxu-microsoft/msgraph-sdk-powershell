@@ -45,7 +45,7 @@ jobs:
   timeoutInMinutes: 360
 
   steps:
-  - template: common-templates/install-tools.yml
+  - template: ../common-templates/install-tools.yml
 
   - task: PowerShell@2
     displayName: Generate module
