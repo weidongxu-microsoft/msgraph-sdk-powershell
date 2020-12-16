@@ -66,7 +66,6 @@ stages:
         Api_Key: $(Api_Key)
         MODULE_PREFIX: $(MODULE_PREFIX)
         WORKLOAD_MODULE_PATH: $(WORKLOAD_MODULE_PATH)
-        GRAPH_VERSION: $(GRAPH_VERSION)
         AUTH_MODULE_PATH: $(AUTH_MODULE_PATH)
         AUTH_MODULE_DLL_PATTERN: $(AUTH_MODULE_DLL_PATTERN)
         EnableSigning: true
