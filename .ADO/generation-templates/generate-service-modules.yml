@@ -44,6 +44,9 @@ jobs:
   pool: MsGraphDevXAzureAgents
   timeoutInMinutes: 360
 
+  variables:
+    ModulesWithChanges: $[ stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'] ]
+
   steps:
   - template: ../common-templates/install-tools.yml
 
@@ -53,11 +56,11 @@ jobs:
       pwsh: true
       targetType: inline
       script: |
-        Write-Host $(ModulesToGenerate)
-        Write-Host "Generating changed modules...."
-        $(ModulesToGenerate) -Split " " | %{
-          Write-Host $_
-        }
+          Write-Host $(ModulesWithChanges)
+          Write-Host "Generating changed modules...."
+          "$(ModulesWithChanges)" -split " " | %{
+              Write-Host $_
+            }
 
   - task: Bash@3
     displayName: 'Switch Branch To $(CHECKOUT_BRANCH)'
@@ -171,7 +174,7 @@ jobs:
       targetType: 'inline'
       pwsh: true
       script: |
-         pwsh $(System.DefaultWorkingDirectory)/tools/GenerateModules.ps1 -Build -Test -UpdateAutoRest
+         pwsh $(System.DefaultWorkingDirectory)/tools/GenerateModules.ps1 -Build -Test -UpdateAutoRest -ModulesToGenerate ($(ModulesWithChanges)" -split " ")
   
   - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
     displayName: 'ESRP DLL Strong Name (Service Modules)'
