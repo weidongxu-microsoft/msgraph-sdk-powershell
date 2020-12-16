@@ -5,8 +5,8 @@ name: $(BuildDefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 pool: MsGraphDevXAzureAgents
 
 variables:
-  # Branch: 'test_weeklyOpenApiDocsDownload/$(Date:yyyyMMdd)'
-  Branch: 'test_weeklyOpenApiDocsDownload'
+  Branch: 'test_weeklyOpenApiDocsDownload/$[format('{0:yyyyMMdd}', pipeline.startTime)]'
+  # Branch: 'test_weeklyOpenApiDocsDownload'
   BaseBranch: 'dev'
   AUTH_MODULE_NAME: 'Authentication'
   AUTH_MODULE_PATH: 'src\Authentication\Authentication'
@@ -57,6 +57,25 @@ stages:
                 "$(ModulesWithChanges)" -split " " | %{
                   Write-Host $_
                 }
+
+  - stage: GenerateServiceModules
+    displayName: Generate Service Modules
+    jobs:
+    - template: generation-templates/generate-service-modules.yml
+      variables:
+        ModulesWithChanges: $[ stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'] ]
+      parameters:
+        ModulesToGenerate: $(ModulesWithChanges)
+        Api_Key: $(Api_Key)
+        MODULE_PREFIX: $(MODULE_PREFIX)
+        WORKLOAD_MODULE_PATH: $(WORKLOAD_MODULE_PATH)
+        GRAPH_VERSION: $(GRAPH_VERSION)
+        AUTH_MODULE_PATH: $(AUTH_MODULE_PATH)
+        AUTH_MODULE_DLL_PATTERN: $(AUTH_MODULE_DLL_PATTERN)
+        EnableSigning: true
+        BUILDNUMBER: $(BUILDNUMBER)
+
+
   # Git diff on download OpenAPI docs. Store changed modules in a variable.
   # Commit downloaded docs.
   # If modules change, bump their minor and meta-module version.
