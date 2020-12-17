@@ -5,6 +5,7 @@ parameters:
     - name: ModulesWithChanges
       displayName: 'Modules With Changes'
       type: string
+      default: ''
     - name: AUTH_MODULE_PATH
       displayName: 'Module Path'
       type: string
