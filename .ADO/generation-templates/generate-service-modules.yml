@@ -2,6 +2,9 @@
 # Licensed under the MIT License.
 
 parameters:
+    - name: ModulesToGenerate
+      displayName: 'Modules to generate'
+      type: string
     - name: AUTH_MODULE_PATH
       displayName: 'Module Path'
       type: string
@@ -51,14 +54,20 @@ jobs:
       pwsh: true
       targetType: inline
       script: |
+          Write-Host $(ModulesToGenerate)
+          Write-Host "Generating changed modules (ModulesToGenerate)...."
+          "$(ModulesToGenerate)" -split " " | %{
+              Write-Host $_
+            }
+
           Write-Host $(ModulesWithChanges)
-          Write-Host "Generating changed modules...."
+          Write-Host "Generating changed modules (ModulesWithChanges)...."
           "$(ModulesWithChanges)" -split " " | %{
               Write-Host $_
             }
           
           Write-Host $(ModulesWithChanges2)
-          Write-Host "Generating changed modules...."
+          Write-Host "Generating changed modules (ModulesWithChanges2)...."
           "$(ModulesWithChanges2)" -split " " | %{
               Write-Host $_
             }
