@@ -49,6 +49,8 @@ jobs:
           pwsh: true
           targetType: 'inline'
           script: |
+            Write-Host $(BaseBranch)
+            Write-Host $(Branch)
             $diff = git diff --name-only
             $ModulesWithChanges = @{}
             $diff | %{
@@ -67,7 +69,7 @@ jobs:
             Write-Host "##vso[task.setvariable variable=ModulesGen;isOutput=true]$ModuleNames"
 
       - task: Bash@3
-        displayName : "Create weekly branch: $(Branch)"
+        displayName : 'Create weekly branch: $(Branch)'
         condition: and(succeeded(), ne(variables['OpenAPIDocDiff.ModulesWithChanges'], ''))
         inputs:
           targetType: 'inline'
@@ -79,7 +81,7 @@ jobs:
               git status
 
       - task: Bash@3
-        displayName : "Commit Downloaded Files"
+        displayName : 'Commit Downloaded Files'
         condition: and(succeeded(), ne(variables['OpenAPIDocDiff.ModulesWithChanges'], ''))
         env: 
           GITHUB_TOKEN: $(GITHUB_TOKEN)

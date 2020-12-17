@@ -46,9 +46,7 @@ jobs:
   displayName: Service Module Generation
   pool: MsGraphDevXAzureAgents
   timeoutInMinutes: 360
-  # condition: and(succeeded(), ne(stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'], ''))
-  variables:
-    ModulesWithChanges2: $[ stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'] ]
+  condition: and(succeeded(), ne(stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'], ''))
   steps:
   # - template: ../common-templates/install-tools.yml
 
@@ -62,19 +60,9 @@ jobs:
           "$(ModulesToGenerate)" -split " " | %{
               Write-Host $_
             }
-          
-          Write-Host "Generating changed modules (ModulesWithChanges)...."
-          "$(ModulesWithChanges)" -split " " | %{
-              Write-Host $_
-            }
 
           Write-Host "Generating changed modules (ModuleTest)...."
           "$(ModuleTest)" -split " " | %{
-              Write-Host $_
-            }
-          
-          Write-Host "Generating changed modules (ModulesWithChanges2)...."
-          "$(ModulesWithChanges2)" -split " " | %{
               Write-Host $_
             }
 
