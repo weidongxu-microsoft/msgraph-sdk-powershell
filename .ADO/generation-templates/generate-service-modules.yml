@@ -2,6 +2,9 @@
 # Licensed under the MIT License.
 
 parameters:
+    - name: ModulesWithChanges
+      displayName: 'Modules With Changes'
+      type: string
     - name: AUTH_MODULE_PATH
       displayName: 'Module Path'
       type: string
@@ -43,6 +46,7 @@ jobs:
     ModulesWithChanges2: $[ stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'] ]
   steps:
   - template: ../common-templates/install-tools.yml
+    enabled: false
 
   - task: PowerShell@2
     displayName: Generate module
@@ -54,6 +58,12 @@ jobs:
           Write-Host $ModulesToGenerate
           Write-Host $(ModulesToGenerate)
           "$(ModulesToGenerate)" -split " " | %{
+              Write-Host $_
+            }
+          
+          Write-Host $(ModulesWithChanges)
+          Write-Host "Generating changed modules (ModulesWithChanges)...."
+          "$(ModulesWithChanges)" -split " " | %{
               Write-Host $_
             }
           
