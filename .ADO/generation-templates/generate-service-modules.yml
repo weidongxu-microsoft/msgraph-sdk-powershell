@@ -42,7 +42,7 @@ jobs:
   displayName: Service Module Generation
   pool: MsGraphDevXAzureAgents
   timeoutInMinutes: 360
-  condition: and(succeeded(), ne(stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'], ''))
+  # condition: and(succeeded(), ne(stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'], ''))
   variables:
     ModulesWithChanges2: $[ stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'] ]
   steps:
