@@ -19,6 +19,7 @@ variables:
   Api_Key: 'Api_Key'
   EnableSigning: true
   BUILDNUMBER: -1
+  ModulesGen: ''
 
 schedules:
 - cron: "0 12 * * WED" # Run every wednesday at noon UTC
@@ -38,28 +39,28 @@ stages:
         Branch: $(BranchName)
         BaseBranch: $(BaseBranch)
 
-  - stage: GenerateModulesWithChanges
-    displayName: Generate module with changes
-    jobs:
-      - job: GenerateModules
-        displayName: Generate modules with changes
-        condition: and(succeeded(), ne(stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'], ''))
-        variables:
-          ModulesWithChanges: $[ stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'] ]
-        steps:
-          - task: PowerShell@2
-            displayName: Generate module
-            inputs:
-              pwsh: true
-              targetType: inline
-              script: |
-                Write-Host $(BranchName)
-                Write-Host $(BranchDate)
-                Write-Host $(BaseBranch)
-                Write-Host "Generating changed modules...."
-                "$(ModulesWithChanges)" -split " " | %{
-                  Write-Host $_
-                }
+  # - stage: GenerateModulesWithChanges
+  #   displayName: Generate module with changes
+  #   jobs:
+  #     - job: GenerateModules
+  #       displayName: Generate modules with changes
+  #       condition: and(succeeded(), ne(stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'], ''))
+  #       variables:
+  #         ModulesWithChanges: $[ stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'] ]
+  #       steps:
+  #         - task: PowerShell@2
+  #           displayName: Generate module
+  #           inputs:
+  #             pwsh: true
+  #             targetType: inline
+  #             script: |
+  #               Write-Host $(BranchName)
+  #               Write-Host $(BranchDate)
+  #               Write-Host $(BaseBranch)
+  #               Write-Host "Generating changed modules...."
+  #               "$(ModulesWithChanges)" -split " " | %{
+  #                 Write-Host $_
+  #               }
 
   - stage: GenerateServiceModules
     displayName: Generate Service Modules
@@ -69,6 +70,7 @@ stages:
       - template: generation-templates/generate-service-modules.yml
         parameters:
           ModulesWithChanges: $(ModulesToGenerate)
+          ModuleTest: $(ModulesGen)
           Api_Key: $(Api_Key)
           MODULE_PREFIX: $(MODULE_PREFIX)
           WORKLOAD_MODULE_PATH: $(WORKLOAD_MODULE_PATH)
