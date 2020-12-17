@@ -54,11 +54,9 @@ jobs:
       pwsh: true
       targetType: inline
       script: |
-          Write-Host $(ModulesToGenerate)
           Write-Host "Generating changed modules (ModulesToGenerate)...."
-          "$(ModulesToGenerate)" -split " " | %{
-              Write-Host $_
-            }
+          Write-Host '${{ parameters.ModulesToGenerate }}'
+          Write-Host $ModulesToGenerate
 
           Write-Host $(ModulesWithChanges)
           Write-Host "Generating changed modules (ModulesWithChanges)...."
