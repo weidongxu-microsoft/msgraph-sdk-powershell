@@ -63,10 +63,11 @@ stages:
 
   - stage: GenerateServiceModules
     displayName: Generate Service Modules
+    variables:
+      ModulesToGenerate: $[ stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'] ]
     jobs:
     - template: generation-templates/generate-service-modules.yml
       parameters:
-        ModulesToGenerate: ${{ stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'] }}
         Api_Key: $(Api_Key)
         MODULE_PREFIX: $(MODULE_PREFIX)
         WORKLOAD_MODULE_PATH: $(WORKLOAD_MODULE_PATH)
