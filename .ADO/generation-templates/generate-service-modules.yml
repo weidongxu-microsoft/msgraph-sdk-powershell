@@ -45,8 +45,7 @@ jobs:
   variables:
     ModulesWithChanges2: $[ stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'] ]
   steps:
-  - template: ../common-templates/install-tools.yml
-    enabled: false
+  # - template: ../common-templates/install-tools.yml
 
   - task: PowerShell@2
     displayName: Generate module
