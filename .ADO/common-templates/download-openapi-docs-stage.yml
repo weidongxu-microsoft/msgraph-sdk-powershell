@@ -49,8 +49,6 @@ jobs:
           pwsh: true
           targetType: 'inline'
           script: |
-            Write-Host $(BaseBranch)
-            Write-Host $(Branch)
             $diff = git diff --name-only
             $ModulesWithChanges = @{}
             $diff | %{
@@ -74,6 +72,8 @@ jobs:
         inputs:
           targetType: 'inline'
           script: |
+              echo $(BaseBranch)
+              echo $(Branch)
               git status
               git checkout $(BaseBranch)
               git branch $(Branch)
