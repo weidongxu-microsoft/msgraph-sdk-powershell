@@ -5,8 +5,8 @@ name: $(BuildDefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 pool: MsGraphDevXAzureAgents
 
 variables:
-  BranchName: test_weeklyOpenApiDocsDownload
-  BranchDate: $[format('{0:yyyyMMdd}', pipeline.startTime)]
+  BranchName: 'test_weeklyOpenApiDocsDownload'
+  BranchDate: '$[format('{0:yyyyMMdd}', pipeline.startTime)]'
   BaseBranch: 'dev'
   AUTH_MODULE_NAME: 'Authentication'
   AUTH_MODULE_PATH: 'src\Authentication\Authentication'
@@ -66,7 +66,7 @@ stages:
     jobs:
     - template: generation-templates/generate-service-modules.yml
       parameters:
-        ModulesToGenerate: $(ModulesWithChanges)
+        ModulesToGenerate: ${{ stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'] }}
         Api_Key: $(Api_Key)
         MODULE_PREFIX: $(MODULE_PREFIX)
         WORKLOAD_MODULE_PATH: $(WORKLOAD_MODULE_PATH)

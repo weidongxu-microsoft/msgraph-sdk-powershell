@@ -57,6 +57,7 @@ jobs:
           Write-Host "Generating changed modules (ModulesToGenerate)...."
           Write-Host '${{ parameters.ModulesToGenerate }}'
           Write-Host $ModulesToGenerate
+          Write-Host $(ModulesToGenerate)
 
           Write-Host $(ModulesWithChanges)
           Write-Host "Generating changed modules (ModulesWithChanges)...."
