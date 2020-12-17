@@ -2,9 +2,6 @@
 # Licensed under the MIT License.
 
 parameters:
-    - name: ModulesToGenerate
-      displayName: 'Modules to generate'
-      type: string
     - name: AUTH_MODULE_PATH
       displayName: 'Module Path'
       type: string
@@ -55,7 +52,6 @@ jobs:
       targetType: inline
       script: |
           Write-Host "Generating changed modules (ModulesToGenerate)...."
-          Write-Host '${{ parameters.ModulesToGenerate }}'
           Write-Host $ModulesToGenerate
           Write-Host $(ModulesToGenerate)
 
