@@ -33,7 +33,6 @@ parameters:
       displayName: 'Checkout Branch'
       type: string
       default: ''
-
 jobs:
 - job: GenerateServiceModules
   displayName: Service Module Generation
@@ -54,10 +53,7 @@ jobs:
           Write-Host "Generating changed modules (ModulesToGenerate)...."
           Write-Host $ModulesToGenerate
           Write-Host $(ModulesToGenerate)
-
-          Write-Host $(ModulesWithChanges)
-          Write-Host "Generating changed modules (ModulesWithChanges)...."
-          "$(ModulesWithChanges)" -split " " | %{
+          "$(ModulesToGenerate)" -split " " | %{
               Write-Host $_
             }
           
