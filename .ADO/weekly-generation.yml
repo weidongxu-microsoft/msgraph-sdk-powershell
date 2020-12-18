@@ -38,29 +38,6 @@ stages:
         Branch: $(Branch)
         BaseBranch: $(BaseBranch)
 
-  # - stage: GenerateModulesWithChanges
-  #   displayName: Generate module with changes
-  #   jobs:
-  #     - job: GenerateModules
-  #       displayName: Generate modules with changes
-  #       condition: and(succeeded(), ne(stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'], ''))
-  #       variables:
-  #         ModulesWithChanges: $[ stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'] ]
-  #       steps:
-  #         - task: PowerShell@2
-  #           displayName: Generate module
-  #           inputs:
-  #             pwsh: true
-  #             targetType: inline
-  #             script: |
-  #               Write-Host $(BranchName)
-  #               Write-Host $(BranchDate)
-  #               Write-Host $(BaseBranch)
-  #               Write-Host "Generating changed modules...."
-  #               "$(ModulesWithChanges)" -split " " | %{
-  #                 Write-Host $_
-  #               }
-
   - stage: GenerateServiceModules
     displayName: Generate Service Modules
     variables:

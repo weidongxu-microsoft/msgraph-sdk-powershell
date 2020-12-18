@@ -44,7 +44,7 @@ jobs:
   timeoutInMinutes: 360
   condition: and(succeeded(), ne(stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'], ''))
   steps:
-  # - template: ../common-templates/install-tools.yml
+  - template: ../common-templates/install-tools.yml
 
   - task: PowerShell@2
     displayName: Generate module
