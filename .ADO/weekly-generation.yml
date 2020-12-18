@@ -5,8 +5,9 @@ name: $(BuildDefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 pool: MsGraphDevXAzureAgents
 
 variables:
-  Branch: testweeklyOpenApiDocsDownload_"$[format('{0:yyyyMMdd}', pipeline.startTime)]"
-  BranchDate: "$[format('{0:yyyyMMdd}', pipeline.startTime)]"
+parameters:
+  BranchDate: $[format('{0:yyyyMMdd}', pipeline.startTime)]
+  Branch: testweeklyOpenApiDocsDownload_$(BranchDate)
   BaseBranch: 'dev'
   AUTH_MODULE_NAME: 'Authentication'
   AUTH_MODULE_PATH: 'src\Authentication\Authentication'
