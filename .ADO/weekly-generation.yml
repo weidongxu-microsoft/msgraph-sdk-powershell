@@ -5,7 +5,7 @@ name: $(BuildDefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 pool: MsGraphDevXAzureAgents
 
 variables:
-  BranchName: 'test_weeklyOpenApiDocsDownload'
+  Branch: 'testweeklyOpenApiDocsDownload'
   BranchDate: "$[format('{0:yyyyMMdd}', pipeline.startTime)]"
   BaseBranch: 'dev'
   AUTH_MODULE_NAME: 'Authentication'
@@ -19,7 +19,6 @@ variables:
   Api_Key: 'Api_Key'
   EnableSigning: true
   BUILDNUMBER: -1
-  ModulesGen: ''
 
 schedules:
 - cron: "0 12 * * WED" # Run every wednesday at noon UTC
@@ -36,7 +35,7 @@ stages:
     jobs:
     - template: common-templates/download-openapi-docs-stage.yml
       parameters:
-        Branch: $(BranchName)
+        Branch: $(Branch)
         BaseBranch: $(BaseBranch)
 
   # - stage: GenerateModulesWithChanges
@@ -70,7 +69,6 @@ stages:
       - template: generation-templates/generate-service-modules.yml
         parameters:
           ModulesWithChanges: $(ModulesToGenerate)
-          ModuleTest: $(ModulesGen)
           Api_Key: $(Api_Key)
           MODULE_PREFIX: $(MODULE_PREFIX)
           WORKLOAD_MODULE_PATH: $(WORKLOAD_MODULE_PATH)

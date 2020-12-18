@@ -64,7 +64,6 @@ jobs:
             $ModulesWithChanges.Add("Search", "Search")
             $ModuleNames = $ModulesWithChanges.Keys
             Write-Host "##vso[task.setvariable variable=ModulesWithChanges;isOutput=true]$ModuleNames"
-            Write-Host "##vso[task.setvariable variable=ModulesGen;isOutput=true]$ModuleNames"
 
       - task: Bash@3
         displayName : 'Create weekly branch: $(Branch)'

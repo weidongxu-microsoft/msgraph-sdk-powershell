@@ -6,10 +6,6 @@ parameters:
       displayName: 'Modules With Changes'
       type: string
       default: ''
-    - name: ModuleTest
-      displayName: 'Modules With Changes'
-      type: string
-      default: ''
     - name: AUTH_MODULE_PATH
       displayName: 'Module Path'
       type: string
@@ -58,11 +54,6 @@ jobs:
       script: |
           Write-Host "Generating changed modules (ModulesToGenerate)...."
           "$(ModulesToGenerate)" -split " " | %{
-              Write-Host $_
-            }
-
-          Write-Host "Generating changed modules (ModuleTest)...."
-          "$(ModuleTest)" -split " " | %{
               Write-Host $_
             }
 
