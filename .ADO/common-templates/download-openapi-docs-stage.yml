@@ -29,6 +29,7 @@ jobs:
       - task: PowerShell@2
         displayName: Download v1.0 OpenApiDocs
         continueOnError: false
+        enabled: true
         inputs:
           filePath: '$(System.DefaultWorkingDirectory)/tools/UpdateOpenApi.ps1'
           pwsh: true
@@ -64,6 +65,25 @@ jobs:
             $ModulesWithChanges.Add("Search", "Search")
             $ModuleNames = $ModulesWithChanges.Keys
             Write-Host "##vso[task.setvariable variable=ModulesWithChanges;isOutput=true]$ModuleNames"
+
+      - task: PowerShell@2
+        name: CalculateAndBumpModuleVersion
+        displayName: "Calculate and bump module versions"
+        inputs:
+          pwsh: true
+          targetType: 'inline'
+          script: |
+            Write-Host $(OpenAPIDocDiff.ModulesWithChanges)
+            $(OpenAPIDocDiff.ModulesWithChanges)
+            $ModulesWithChanges = $(OpenAPIDocDiff.ModulesWithChanges)
+            $ModulesWithChanges | ForEach-Object {
+              # Get PSGallery version
+              $Module = Find-Module "Microsoft.Graph.$_" -Repository PSGallery
+              $ModuleVersion = [System.Version]($Module.Version)
+              $NewModuleVersion = "$($ModuleVersion.Major).$($ModuleVersion.Minor + 1).$($ModuleVersion.Build)"
+              # Bump minor version
+              . $(System.DefaultWorkingDirectory)/tools/SetModuleVersion.ps1 -VersionNumber $NewModuleVersion -Modules $_
+            }
 
       - task: Bash@3
         displayName : 'Create weekly branch: $(Branch)'
