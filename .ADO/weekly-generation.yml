@@ -8,16 +8,6 @@ variables:
   BranchDate: "$[format('{0:yyyyMMdd}', pipeline.startTime)]"
   Branch: 'testweeklyOpenApiDocsDownload/$(BranchDate)'
   BaseBranch: 'dev'
-  AUTH_MODULE_NAME: 'Authentication'
-  AUTH_MODULE_PATH: 'src\Authentication\Authentication'
-  AUTH_MODULE_DLL_PATTERN: 'Microsoft.Graph.Authentication.dll'
-  MODULE_DLL_PATTERN: 'Microsoft.Graph.Authentication.dll'
-  MODULE_PREFIX: 'Microsoft.Graph'
-  ROLLUP_MODULE_NAME: 'Graph'
-  ROLLUP_MODULE_PATH: 'src/Graph/Graph'
-  WORKLOAD_MODULE_PATH: 'src'
-  Api_Key: 'Api_Key'
-  EnableSigning: true
   BUILDNUMBER: -1
 
 schedules:
@@ -46,13 +36,10 @@ stages:
       - template: generation-templates/generate-service-modules.yml
         parameters:
           ModulesWithChanges: $(ModulesToGenerate)
-          Api_Key: $(Api_Key)
           MODULE_PREFIX: $(MODULE_PREFIX)
-          WORKLOAD_MODULE_PATH: $(WORKLOAD_MODULE_PATH)
-          AUTH_MODULE_PATH: $(AUTH_MODULE_PATH)
-          AUTH_MODULE_DLL_PATTERN: $(AUTH_MODULE_DLL_PATTERN)
           EnableSigning: true
           BUILDNUMBER: $(BUILDNUMBER)
+          CHECKOUT_BRANCH: $(Branch)
 
 
   # Git diff on download OpenAPI docs. Store changed modules in a variable.

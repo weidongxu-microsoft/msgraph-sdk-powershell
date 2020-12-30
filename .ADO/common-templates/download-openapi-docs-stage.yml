@@ -6,6 +6,10 @@ parameters:
     displayName: 'Branch'
     type: string
     default: 'weeklyOpenApiDocsDownload'
+  - name: BaseBranch
+    displayName: 'Base Branch'
+    type: string
+    default: 'dev'
   - name: GitUserEmail
     displayName: 'Git User Email'
     type: string
@@ -14,10 +18,6 @@ parameters:
     displayName: 'Git User Name'
     type: string
     default: 'Microsoft Graph DevX Tooling'
-  - name: BaseBranch
-    displayName: 'Base Branch'
-    type: string
-    default: 'dev'
 
 jobs:
   - job: GetLatestDocs
@@ -72,8 +72,7 @@ jobs:
         inputs:
           pwsh: true
           targetType: 'inline'
-          script: |
-            Write-Host "Test: $(OpenAPIDocDiff.ModulesWithChanges)"
+          script: | 
             "$(OpenAPIDocDiff.ModulesWithChanges)" -split " " | ForEach-Object {
               # Get PSGallery version
               $Module = Find-Module "Microsoft.Graph.$_" -Repository PSGallery
@@ -82,6 +81,15 @@ jobs:
               # Bump minor version
               . $(System.DefaultWorkingDirectory)/tools/SetModuleVersion.ps1 -VersionNumber $NewModuleVersion -Modules $_
             }
+     
+      - task: PowerShell@2
+        displayName: 'Generate Profiles'
+        enabled: false
+        continueOnError: false
+        inputs:
+          targetType: 'filePath'
+          pwsh: true
+          filePath: $(System.DefaultWorkingDirectory)/tools/GenerateProfiles.ps1
 
       - task: Bash@3
         displayName : 'Create weekly branch: $(Branch)'

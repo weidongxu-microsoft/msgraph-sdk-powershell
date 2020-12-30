@@ -14,9 +14,6 @@ parameters:
       displayName: 'Module Pattern'
       type: string
       default: 'Microsoft.Graph.Authentication.dll'
-    - name: Api_Key
-      displayName: 'Api Key'
-      type: string
     - name: WORKLOAD_MODULE_PATH
       displayName: 'Workload Module Path'
       type: string
@@ -48,11 +45,11 @@ jobs:
 
   - task: PowerShell@2
     displayName: Generate module
+    enabled: false
     inputs:
       pwsh: true
       targetType: inline
       script: |
-          Write-Host "Generating changed modules (ModulesToGenerate)...."
           "$(ModulesToGenerate)" -split " " | %{
               Write-Host $_
             }
@@ -166,13 +163,15 @@ jobs:
 
   - task: PowerShell@2
     displayName: 'Generate and Build Service Modules'
-    enabled: false
+    enabled: true
     inputs:
       targetType: 'inline'
       pwsh: true
       script: |
-         Write-Host "$(ModulesWithChanges)"
-         pwsh $(System.DefaultWorkingDirectory)/tools/GenerateModules.ps1 -Build -Test -UpdateAutoRest -ModulesToGenerate ("$(ModulesWithChanges)" -split " ")
+         "$(ModulesToGenerate)" -split " " | %{
+            Write-Host $_
+          }
+          pwsh $(System.DefaultWorkingDirectory)/tools/GenerateModules.ps1 -Build -Test -UpdateAutoRest -ModulesToGenerate ("$(ModulesToGenerate)" -split " ")
   
   - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
     displayName: 'ESRP DLL Strong Name (Service Modules)'
