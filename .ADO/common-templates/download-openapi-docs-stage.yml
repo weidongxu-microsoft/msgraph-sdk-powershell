@@ -74,8 +74,7 @@ jobs:
           targetType: 'inline'
           script: |
             Write-Host "Test: $(OpenAPIDocDiff.ModulesWithChanges)"
-            $(OpenAPIDocDiff.ModulesWithChanges)
-            $(OpenAPIDocDiff.ModulesWithChanges) -split " " | ForEach-Object {
+            "$(OpenAPIDocDiff.ModulesWithChanges)" -split " " | ForEach-Object {
               # Get PSGallery version
               $Module = Find-Module "Microsoft.Graph.$_" -Repository PSGallery
               $ModuleVersion = [System.Version]($Module.Version)
