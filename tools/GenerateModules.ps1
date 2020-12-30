@@ -80,7 +80,7 @@ if ($ModulesToGenerate.Count -eq 0) {
     $ModulesToGenerate = $ModuleMapping.Keys
 }
 
-$ModulesToGenerate | ForEach-Object -ThrottleLimit $ModuleMapping.Keys.Count -Parallel {
+$ModulesToGenerate | ForEach-Object -ThrottleLimit $ModulesToGenerate.Count -Parallel {
     enum VersionState {
         Invalid
         Valid
