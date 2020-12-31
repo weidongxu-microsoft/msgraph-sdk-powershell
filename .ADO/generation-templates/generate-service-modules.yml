@@ -40,8 +40,7 @@ jobs:
             git checkout $(Branch)
             git status
 
-      - template: ../common-templates/install-tools.yml
-        enabled: false
+      # - template: ../common-templates/install-tools.yml
 
       - task: PowerShell@2
         displayName: Generate module
