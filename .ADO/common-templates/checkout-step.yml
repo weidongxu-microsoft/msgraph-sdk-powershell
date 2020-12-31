@@ -22,7 +22,6 @@ steps:
     inputs:
       targetType: "inline"
       script: |
-        Write-Host "$(GitUserEmail) - $(GitUserName)"
         Write-Host "$(GitEmail) - $(GitName)"
         git config --global user.email '$(GitEmail)'
         git config --global user.name '$(GitName)'
