@@ -34,10 +34,8 @@ stages:
     jobs:
       - template: generation-templates/generate-service-modules.yml
         parameters:
-          ModulesWithChanges: $(ModulesToGenerate)
-          MODULE_PREFIX: $(MODULE_PREFIX)
+          Branch: $(Branch)
           EnableSigning: true
-          CheckoutBranch: $(Branch)
   # Git diff on download OpenAPI docs. Store changed modules in a variable.
   # Commit downloaded docs.
   # If modules change, bump their minor and meta-module version.
