@@ -36,7 +36,6 @@ jobs:
       - task: PowerShell@2
         name: OpenAPIDocDiff
         displayName: "Get modules with changes"
-        enabled: false
         inputs:
           pwsh: true
           targetType: "inline"
