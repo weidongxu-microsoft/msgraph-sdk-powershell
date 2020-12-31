@@ -40,11 +40,11 @@ jobs:
             git checkout $(Branch)
             git status
 
-      # - template: ../common-templates/install-tools.yml
+      - template: ../common-templates/install-tools.yml
 
       - task: PowerShell@2
         displayName: Generate module
-        enabled: true
+        enabled: false
         inputs:
           pwsh: true
           targetType: inline
@@ -150,7 +150,7 @@ jobs:
 
       - task: PowerShell@2
         displayName: "Generate and Build Service Modules"
-        enabled: false
+        enabled: true
         inputs:
           targetType: "inline"
           pwsh: true
