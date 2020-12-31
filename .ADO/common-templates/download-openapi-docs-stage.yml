@@ -97,8 +97,6 @@ jobs:
         inputs:
           targetType: 'inline'
           script: |
-              echo $(BaseBranch)
-              echo $(Branch)
               git status
               git checkout $(BaseBranch)
               git branch $(Branch)

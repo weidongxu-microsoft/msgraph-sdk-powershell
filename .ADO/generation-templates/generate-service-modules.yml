@@ -2,38 +2,33 @@
 # Licensed under the MIT License.
 
 parameters:
-    - name: ModulesWithChanges
-      displayName: 'Modules With Changes'
-      type: string
-      default: ''
-    - name: AUTH_MODULE_PATH
-      displayName: 'Module Path'
-      type: string
-      default: 'src\Authentication\Authentication\bin\'
-    - name: AUTH_MODULE_DLL_PATTERN
-      displayName: 'Module Pattern'
-      type: string
-      default: 'Microsoft.Graph.Authentication.dll'
-    - name: WORKLOAD_MODULE_PATH
-      displayName: 'Workload Module Path'
-      type: string
-      default: 'src\'
-    - name: MODULE_PREFIX
-      displayName: 'Module Prefix'
-      type: string
-      default: 'Microsoft.Graph'
-    - name: EnableSigning
-      displayName: 'Enable Signing'
-      type: boolean
-      default: false
-    - name: BUILDNUMBER
-      displayName: 'Build Number'
-      type: string
-      default: $[format('{0:yyMMddHH}', pipeline.startTime)]
-    - name: CHECKOUT_BRANCH
-      displayName: 'Checkout Branch'
-      type: string
-      default: ''
+  - name: ModulesWithChanges
+    displayName: 'Modules With Changes'
+    type: string
+    default: ''
+  - name: AUTH_MODULE_PATH
+    displayName: 'Module Path'
+    type: string
+    default: 'src\Authentication\Authentication\bin\'
+  - name: AUTH_MODULE_DLL_PATTERN
+    displayName: 'Module Pattern'
+    type: string
+    default: 'Microsoft.Graph.Authentication.dll'
+  - name: WORKLOAD_MODULE_PATH
+    displayName: 'Workload Module Path'
+    type: string
+    default: 'src\'
+  - name: MODULE_PREFIX
+    displayName: 'Module Prefix'
+    type: string
+    default: 'Microsoft.Graph'
+  - name: EnableSigning
+    displayName: 'Enable Signing'
+    type: boolean
+    default: false
+  - name: CheckoutBranch
+    displayName: 'Checkout Branch'
+    type: string
 jobs:
 - job: GenerateServiceModules
   displayName: Service Module Generation
@@ -41,6 +36,19 @@ jobs:
   timeoutInMinutes: 360
   condition: and(succeeded(), ne(stageDependencies.DownloadOpenAPIDocs.GetLatestDocs.outputs['OpenAPIDocDiff.ModulesWithChanges'], ''))
   steps:
+  - task: Bash@3
+    displayName: 'Switch branch to $(CheckoutBranch)'
+    condition: and(succeeded(), ne('${{ parameters.CheckoutBranch }}', ''))
+    enabled: true
+    inputs:
+      targetType: 'inline'
+      script: |
+        echo $(CheckoutBranch)
+        git status
+        git pull
+        git checkout $(CheckoutBranch)
+        git status
+
   - template: ../common-templates/install-tools.yml
 
   - task: PowerShell@2
@@ -53,18 +61,6 @@ jobs:
           "$(ModulesToGenerate)" -split " " | %{
               Write-Host $_
             }
-
-  - task: Bash@3
-    displayName: 'Switch Branch To $(CHECKOUT_BRANCH)'
-    condition: and(succeeded(), ne('${{ parameters.CHECKOUT_BRANCH }}', ''))
-    enabled: true
-    inputs:
-      targetType: 'inline'
-      script: |
-          git status
-          git pull
-          git checkout $(CHECKOUT_BRANCH)
-          git status
 
   - task: PowerShell@2
     displayName: 'Generate Profiles'
@@ -83,7 +79,7 @@ jobs:
       targetType: 'inline'
       pwsh: true
       script: |
-        pwsh $(System.DefaultWorkingDirectory)/tools/GenerateAuthenticationModule.ps1 -ArtifactsLocation $(Build.ArtifactStagingDirectory) -Build -EnableSigning -BuildWhenEqual -ModulePreviewNumber $(BUILDNUMBER) -RepositoryName "LocalNugetFeed"
+        pwsh $(System.DefaultWorkingDirectory)/tools/GenerateAuthenticationModule.ps1 -ArtifactsLocation $(Build.ArtifactStagingDirectory) -Build -EnableSigning -BuildWhenEqual -RepositoryName "LocalNugetFeed"
 
   - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
     displayName: 'ESRP DLL Strong Name (Graph Auth Module)'

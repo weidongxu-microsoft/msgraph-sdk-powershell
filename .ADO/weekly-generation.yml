@@ -8,7 +8,6 @@ variables:
   BranchDate: "$[format('{0:yyyyMMdd}', pipeline.startTime)]"
   Branch: 'testweeklyOpenApiDocsDownload/$(BranchDate)'
   BaseBranch: 'dev'
-  BUILDNUMBER: -1
 
 schedules:
 - cron: "0 12 * * WED" # Run every wednesday at noon UTC
@@ -38,8 +37,7 @@ stages:
           ModulesWithChanges: $(ModulesToGenerate)
           MODULE_PREFIX: $(MODULE_PREFIX)
           EnableSigning: true
-          BUILDNUMBER: $(BUILDNUMBER)
-          CHECKOUT_BRANCH: $(Branch)
+          CheckoutBranch: $(Branch)
 
 
   # Git diff on download OpenAPI docs. Store changed modules in a variable.
