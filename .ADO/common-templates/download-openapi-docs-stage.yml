@@ -25,6 +25,9 @@ jobs:
     pool: MsGraphDevXAzureAgents
     steps:
       - template: ./checkout-step.yml
+        parameters:
+          GitUserEmail: $(GitUserEmail)
+          GitUserName: $(GitUserName)
 
       - task: PowerShell@2
         displayName: Download v1.0 OpenApiDocs
@@ -46,6 +49,7 @@ jobs:
       - task: PowerShell@2
         name: OpenAPIDocDiff
         displayName: "Get modules with changes"
+        enabled: false
         inputs:
           pwsh: true
           targetType: 'inline'
@@ -69,6 +73,7 @@ jobs:
       - task: PowerShell@2
         name: CalculateAndBumpModuleVersion
         displayName: "Calculate and bump module versions"
+        enabled: false
         inputs:
           pwsh: true
           targetType: 'inline'
@@ -94,6 +99,7 @@ jobs:
       - task: Bash@3
         displayName : 'Create weekly branch: $(Branch)'
         condition: and(succeeded(), ne(variables['OpenAPIDocDiff.ModulesWithChanges'], ''))
+        enabled: false
         inputs:
           targetType: 'inline'
           script: |
@@ -106,6 +112,7 @@ jobs:
       - task: Bash@3
         displayName : 'Commit Downloaded Files'
         condition: and(succeeded(), ne(variables['OpenAPIDocDiff.ModulesWithChanges'], ''))
+        enabled: false
         env: 
           GITHUB_TOKEN: $(GITHUB_TOKEN)
         inputs:

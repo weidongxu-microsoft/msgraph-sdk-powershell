@@ -1,10 +1,8 @@
 parameters:
   - name: GitUserEmail
-    displayName: 'Git User Email'
     type: string
     default: 'GraphTooling@service.microsoft.com'
   - name: GitUserName
-    displayName: 'Git User Name'
     type: string
     default: 'Microsoft Graph DevX Tooling'
 
@@ -24,5 +22,6 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
+      Write-Host '$(GitUserEmail) - $(GitUserName)'
       git config --global user.email '$(GitUserEmail)'
       git config --global user.name '$(GitUserName)'
