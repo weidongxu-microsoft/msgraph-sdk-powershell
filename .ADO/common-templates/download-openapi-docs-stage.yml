@@ -35,7 +35,7 @@ jobs:
 
       - task: PowerShell@2
         name: OpenAPIDocDiff
-        displayName: "Get modules with changes"
+        displayName: "OpenAPI Diff"
         inputs:
           pwsh: true
           targetType: "inline"
@@ -43,12 +43,9 @@ jobs:
             $diff = git diff --name-only
             $ModulesWithChanges = @{}
             $diff | %{
-              if ($_ -match 'openApiDocs\/(v1.0|beta)\/(.*).yml')
+              if (($_ -match 'openApiDocs\/(v1.0|beta)\/(.*).yml') -and !$ModulesWithChanges.ContainsKey($matches.2))
               {
-                if (!$ModulesWithChanges.ContainsKey($matches.2))
-                  {
-                    $ModulesWithChanges.Add($matches.2, $matches.1)
-                  }
+                $ModulesWithChanges.Add($matches.2, $matches.1)
               }
             }
             $ModulesWithChanges.Add("CloudCommunications", "CloudCommunications")
@@ -58,7 +55,7 @@ jobs:
 
       - task: PowerShell@2
         name: CalculateAndBumpModuleVersion
-        displayName: "Calculate and bump module versions"
+        displayName: "Calculate and bump service module version"
         inputs:
           pwsh: true
           targetType: "inline"
