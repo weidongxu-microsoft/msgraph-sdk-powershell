@@ -6,26 +6,26 @@ pool: MsGraphDevXAzureAgents
 
 variables:
   BranchDate: "$[format('{0:yyyyMMdd}', pipeline.startTime)]"
-  Branch: 'testweeklyOpenApiDocsDownload/$(BranchDate)'
-  BaseBranch: 'dev'
+  Branch: "testweeklyOpenApiDocsDownload/$(BranchDate)"
+  BaseBranch: "dev"
 
 schedules:
-- cron: "0 12 * * WED" # Run every wednesday at noon UTC
-  displayName: "Weekly SDK Generation"
-  branches: 
-    include:
-    - dev
-  always: true
+  - cron: "0 12 * * WED" # Run every wednesday at noon UTC
+    displayName: "Weekly SDK Generation"
+    branches:
+      include:
+        - dev
+    always: true
 
 stages:
   # Run checkout stage.
   - stage: DownloadOpenAPIDocs
-    displayName: 'Download OpenAPI Docs'
+    displayName: "Download OpenAPI Docs"
     jobs:
-    - template: common-templates/download-openapi-docs-stage.yml
-      parameters:
-        Branch: $(Branch)
-        BaseBranch: $(BaseBranch)
+      - template: common-templates/download-openapi-docs-stage.yml
+        parameters:
+          Branch: $(Branch)
+          BaseBranch: $(BaseBranch)
 
   - stage: GenerateServiceModules
     displayName: Generate Service Modules
@@ -38,8 +38,6 @@ stages:
           MODULE_PREFIX: $(MODULE_PREFIX)
           EnableSigning: true
           CheckoutBranch: $(Branch)
-
-
   # Git diff on download OpenAPI docs. Store changed modules in a variable.
   # Commit downloaded docs.
   # If modules change, bump their minor and meta-module version.

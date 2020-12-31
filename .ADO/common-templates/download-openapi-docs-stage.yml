@@ -3,21 +3,21 @@
 
 parameters:
   - name: Branch
-    displayName: 'Branch'
+    displayName: "Branch"
     type: string
-    default: 'weeklyOpenApiDocsDownload'
+    default: "weeklyOpenApiDocsDownload"
   - name: BaseBranch
-    displayName: 'Base Branch'
+    displayName: "Base Branch"
     type: string
-    default: 'dev'
+    default: "dev"
   - name: GitUserEmail
-    displayName: 'Git User Email'
+    displayName: "Git User Email"
     type: string
-    default: 'GraphTooling@service.microsoft.com'
+    default: "GraphTooling@service.microsoft.com"
   - name: GitUserName
-    displayName: 'Git User Name'
+    displayName: "Git User Name"
     type: string
-    default: 'Microsoft Graph DevX Tooling'
+    default: "Microsoft Graph DevX Tooling"
 
 jobs:
   - job: GetLatestDocs
@@ -26,15 +26,15 @@ jobs:
     steps:
       - template: ./checkout-step.yml
         parameters:
-          GitUserEmail: $(GitUserEmail)
-          GitUserName: $(GitUserName)
+          GitEmail: $(GitUserEmail)
+          GitName: $(GitUserName)
 
       - task: PowerShell@2
         displayName: Download v1.0 OpenApiDocs
         continueOnError: false
         enabled: true
         inputs:
-          filePath: '$(System.DefaultWorkingDirectory)/tools/UpdateOpenApi.ps1'
+          filePath: "$(System.DefaultWorkingDirectory)/tools/UpdateOpenApi.ps1"
           pwsh: true
 
       - task: PowerShell@2
@@ -42,8 +42,8 @@ jobs:
         continueOnError: false
         enabled: false
         inputs:
-          filePath: '$(System.DefaultWorkingDirectory)/tools/UpdateOpenApi.ps1'
-          arguments: '-BetaGraphVersion'
+          filePath: "$(System.DefaultWorkingDirectory)/tools/UpdateOpenApi.ps1"
+          arguments: "-BetaGraphVersion"
           pwsh: true
 
       - task: PowerShell@2
@@ -52,7 +52,7 @@ jobs:
         enabled: false
         inputs:
           pwsh: true
-          targetType: 'inline'
+          targetType: "inline"
           script: |
             $diff = git diff --name-only
             $ModulesWithChanges = @{}
@@ -76,8 +76,8 @@ jobs:
         enabled: false
         inputs:
           pwsh: true
-          targetType: 'inline'
-          script: | 
+          targetType: "inline"
+          script: |
             "$(OpenAPIDocDiff.ModulesWithChanges)" -split " " | ForEach-Object {
               # Get PSGallery version
               $Module = Find-Module "Microsoft.Graph.$_" -Repository PSGallery
@@ -86,37 +86,37 @@ jobs:
               # Bump minor version
               . $(System.DefaultWorkingDirectory)/tools/SetModuleVersion.ps1 -VersionNumber $NewModuleVersion -Modules $_
             }
-     
+
       - task: PowerShell@2
-        displayName: 'Generate Profiles'
+        displayName: "Generate Profiles"
         enabled: false
         continueOnError: false
         inputs:
-          targetType: 'filePath'
+          targetType: "filePath"
           pwsh: true
           filePath: $(System.DefaultWorkingDirectory)/tools/GenerateProfiles.ps1
 
       - task: Bash@3
-        displayName : 'Create weekly branch: $(Branch)'
+        displayName: "Create weekly branch: $(Branch)"
         condition: and(succeeded(), ne(variables['OpenAPIDocDiff.ModulesWithChanges'], ''))
         enabled: false
         inputs:
-          targetType: 'inline'
+          targetType: "inline"
           script: |
-              git status
-              git checkout $(BaseBranch)
-              git branch $(Branch)
-              git checkout $(Branch)
-              git status
+            git status
+            git checkout $(BaseBranch)
+            git branch $(Branch)
+            git checkout $(Branch)
+            git status
 
       - task: Bash@3
-        displayName : 'Commit Downloaded Files'
+        displayName: "Commit Downloaded Files"
         condition: and(succeeded(), ne(variables['OpenAPIDocDiff.ModulesWithChanges'], ''))
         enabled: false
-        env: 
+        env:
           GITHUB_TOKEN: $(GITHUB_TOKEN)
         inputs:
-          targetType: 'inline'
+          targetType: "inline"
           script: |
             git status
             git add .
