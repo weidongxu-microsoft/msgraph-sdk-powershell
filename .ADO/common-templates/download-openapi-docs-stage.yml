@@ -35,7 +35,7 @@ jobs:
 
       - task: PowerShell@2
         name: OpenAPIDocDiff
-        displayName: "OpenAPI Diff"
+        displayName: "Get OpenAPI Diff"
         inputs:
           pwsh: true
           targetType: "inline"
@@ -54,7 +54,16 @@ jobs:
             Write-Host "##vso[task.setvariable variable=ModulesWithChanges;isOutput=true]$ModuleNames"
 
       - task: PowerShell@2
-        name: CalculateAndBumpModuleVersion
+        displayName: "Generate Profiles"
+        enabled: false
+        continueOnError: false
+        inputs:
+          targetType: "filePath"
+          pwsh: true
+          filePath: $(System.DefaultWorkingDirectory)/tools/GenerateProfiles.ps1
+
+      - task: PowerShell@2
+        name: CalculateAndBumpServiceModuleVersion
         displayName: "Calculate and bump service module version"
         inputs:
           pwsh: true
@@ -70,13 +79,20 @@ jobs:
             }
 
       - task: PowerShell@2
-        displayName: "Generate Profiles"
-        enabled: false
-        continueOnError: false
+        name: CalculateAndBumpMetaModuleVersion
+        displayName: "Calculate and bump service module version"
         inputs:
-          targetType: "filePath"
           pwsh: true
-          filePath: $(System.DefaultWorkingDirectory)/tools/GenerateProfiles.ps1
+          targetType: "inline"
+          script: |
+            "$(OpenAPIDocDiff.ModulesWithChanges)" -split " " | ForEach-Object {
+              # Get PSGallery version
+              $Module = Find-Module "Microsoft.Graph.$_" -Repository PSGallery
+              $ModuleVersion = [System.Version]($Module.Version)
+              $NewModuleVersion = "$($ModuleVersion.Major).$($ModuleVersion.Minor + 1).$($ModuleVersion.Build)"
+              # Bump minor version
+              . $(System.DefaultWorkingDirectory)/tools/SetModuleVersion.ps1 -VersionNumber $NewModuleVersion -Modules $_
+            }
 
       - task: Bash@3
         displayName: "Create weekly branch: $(Branch)"
